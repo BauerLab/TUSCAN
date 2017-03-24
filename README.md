@@ -3,7 +3,8 @@
 On-target component of the [GT-Scan](http://gt-scan.net) suite.
 
 **Clone the Git repository**
-You need to have [Git-LFS](https://git-lfs.github.com) installed on your computer to handle one file that is larger than the 100MB file size limit of github.
+
+You need to have [git-lfs](https://git-lfs.github.com) installed on your computer to handle one file (rfModelclassifier.joblib) that is larger than the 100MB file size limit of github.
 
 **Building a model**  
 To build classifier, run

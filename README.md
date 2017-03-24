@@ -1,5 +1,8 @@
 # Using the TUSCAN predictor
 
+On-target component of the GT-Scan suite.
+
+
 **Building a model**  
 To build classifier, run
 ```

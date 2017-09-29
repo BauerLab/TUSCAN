@@ -33,7 +33,7 @@ a = []
 for i in l:
 	a.append(features.index(i))
 
-data = genfromtxt(open(sys.argv[2], 'r'), dtype = 'f8', skip_header = 1, usecols = range(1,num_features))
+data = genfromtxt(sys.argv[2], dtype = 'f8', skip_header = 1, usecols = range(1,num_features))
 if sys.argv[1] == '-r':	
 	target = data[:, features.index('Activity')]
 elif sys.argv[1] == '-c':
@@ -41,18 +41,18 @@ elif sys.argv[1] == '-c':
 train = data[:, a]
 
 #Create and train the randomForest
-print "Building Random Forest"
+print("Building Random Forest")
 if sys.argv[1] == '-r':
 	rf = RandomForestRegressor(n_estimators=1001, max_features=2)
-	print "Fitting Random Forest Regressor"
+	print("Fitting Random Forest Regressor")
 	rf.fit(train, target)	
 	with open('rfModelregressor.joblib', 'wb') as f:
 		joblib.dump(rf, f)
 elif sys.argv[1] == '-c':
 	rf = RandomForestClassifier(n_estimators=1001, max_features=2)
-	print "Fitting Random Forest Classifier"
+	print("Fitting Random Forest Classifier")
 	rf.fit(train, target)
 	with open('rfModelclassifier.joblib', 'wb') as f:
 		joblib.dump(rf, f)
 else:
-	print "Please specify -r or -c for regressor of classifier (first argument)"		
+	print("Please specify -r or -c for regressor of classifier (first argument)")

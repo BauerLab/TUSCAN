@@ -7,7 +7,7 @@
 
 import sys
 import FeatureMatrix
-import cPickle
+import pickle
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.externals import joblib
 import numpy
@@ -31,7 +31,7 @@ has_name = True
 # If a bed file is given
 if (args.t == 'bed'):
 	if not args.g:
-		print "Genome required with bed file"
+		print("Genome required with bed file")
 		sys.exit()
 	b = open(args.i, 'r')
 	bed_type = b.readline()
@@ -152,14 +152,13 @@ elif (args.t == 'txt'):
 			z += 1
 	f.close
 else:
-	print "Usage [-t bed/fa/txt]"
+	print("Usage [-t bed/fa/txt]")
 	sys.exit()
 
 #Read in sequence data to create feature matrix
 #generate feature matrix
 stdout_ = sys.stdout
 sys.stdout = open(name, 'w')
-
 FeatureMatrix.main([s])
 sys.stdout.close()
 sys.stdout = stdout_
@@ -177,7 +176,7 @@ a = []
 for i in l:
 	a.append(features.index(i))
 
-data = numpy.genfromtxt(open(name, 'r'), dtype = 'f8', usecols = range(1,num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', usecols = range(1,num_features))
 train = data[:, a]
 # Remove header row
 train = numpy.delete(train, 0, 0)
@@ -200,7 +199,7 @@ if args.m == 'Regression':
 		f.close()		
 	#Print to standard output
 	else:
-		print toPrint
+		print(toPrint)
 elif args.m == 'Classification':
 	with open('rfModelclassifier.joblib', 'rb') as f:
 		rf = joblib.load(f)
@@ -216,6 +215,6 @@ elif args.m == 'Classification':
 		f.close()		
 	#Print to standard output
 	else:
-		print toPrint
+		print(toPrint)
 else:
-	print "Usage: [-m Regression] or [-m Classification]"
+	print("Usage: [-m Regression] or [-m Classification]")

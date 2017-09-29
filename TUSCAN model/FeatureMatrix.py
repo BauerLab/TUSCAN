@@ -9,6 +9,7 @@
 #TODO: May need to swap around score and sign in bed split - see TODO below
 
 from __future__ import print_function
+import sys
 
 #determines gc content of given sequence
 def gc(seq):
@@ -16,15 +17,15 @@ def gc(seq):
 	n = 0
 	for r in seq:
 		if r == 'C' or r == 'G':
-			n+= 1
-	return round(float(n)/l * 100, 2)  
+			n += 1
+	return round(float(n)/l * 100, 2)
 		
 #determines number of a given base in a given sequence
 def content(seq, base):
 	n = 0
 	for r in seq:
 		if r == base:
-			n+=1
+			n += 1
 	return n
 
 def di_content(seq, di):
@@ -33,7 +34,7 @@ def di_content(seq, di):
 		for j in range(len(seq)-1):
 			if (seq[j:j+2] == i):
 				count+= 1
-		print("{:4}".format(count), end='')
+		print('{:4}'.format(count), end='')
 	print('  ', end='')
 
 def pam(seq, di, bases):
@@ -41,7 +42,7 @@ def pam(seq, di, bases):
 	for i in di:
 		multiply = bases.index(seq[24])
 		offset = bases.index(seq[27])
-		l[multiply*4 + offset] = 1
+		l[multiply * 4 + offset] = 1
 	print('     '.join(str(n) for n in l), end='  ')
 		
 
@@ -62,12 +63,10 @@ def nucleotide(seq, bases):
 def dinucleotide(seq, di):
 	#-1 is since a sequence of length N has N-1 dinucleotides
 	l = [0] * ((len(seq))-1) * 16
-	for i in range((len(seq))-1):
+	for i in range((len(seq)) - 1):
 		l[16 * i + di.index(seq[i:i+2])] = 1
 	print('    '.join(str(n) for n in l), end='')
 		
-import sys
-
 #global variables
 
 def main(args):
@@ -78,7 +77,7 @@ def main(args):
 	seqLength = 30
 	for a in bases:
 		for b in bases:
-			di.append(str(a)+str(b))
+			di.append(str(a) + str(b))
 
 	d = args[0]
 			
@@ -100,28 +99,28 @@ def main(args):
 
 	#with bed file (scores)
 	if (len(args) > 1):
-		LAYOUT = "{!s:25} {!s:6} {!s:2} {!s:2} {!s:2} {!s:2} {!s:12}"
-		print(LAYOUT.format("Name", "GC_", "A", "C", "G", "T", "Activity"), end='')
+		LAYOUT = '{!s:25} {!s:6} {!s:2} {!s:2} {!s:2} {!s:2} {!s:12}'
+		print(LAYOUT.format('Name', 'GC_', 'A', 'C', 'G', 'T', 'Activity'), end='')
 	#without bed file (no scores)
 	else:
-		LAYOUT_1 = "{!s:30} {!s:6} {!s:2} {!s:2} {!s:2} {!s:2}"
-		print(LAYOUT_1.format("Name", "GC_", "A", "C", "G", "T"), end='')
+		LAYOUT_1 = '{!s:30} {!s:6} {!s:2} {!s:2} {!s:2} {!s:2}'
+		print(LAYOUT_1.format('Name', 'GC_', 'A', 'C', 'G', 'T'), end='')
 
 	# range is from 1 up to sequence length (+1 accounts for shift from zero)
-	for i in range(1, (seqLength+1)):
+	for i in range(1, (seqLength + 1)):
 		for j in bases:
-			print("{:3}".format(str(j)+str(i)), end='  ')
+			print('{:3}'.format(str(j)+str(i)), end='  ')
 
-	for i in range(1, (seqLength+1) -1):
+	for i in range(1, (seqLength + 1) - 1):
 		for j in di:
-			print("{:4}".format(str(j)+str(i)), end='  ')
+			print('{:4}'.format(str(j)+str(i)), end='  ')
 
 	for i in range(len(di)):
-		print("{:4}".format(di[i]), end='')
+		print('{:4}'.format(di[i]), end='')
 
 	for i in range(len(di)):
 		s = str(di[i][0]) + 'GG' + str(di[i][1])
-		print("{:5}".format(s), end='  ')
+		print('{:5}'.format(s), end='  ')
 
 	#new line after header
 	print()
@@ -136,7 +135,7 @@ def main(args):
 						content(d[a]['seq'], 'A'),
 						content(d[a]['seq'], 'C'), 
 						content(d[a]['seq'], 'G'),
-						content(d[a]['seq'], 'T'),  
+						content(d[a]['seq'], 'T'),
 						d[a]['score']
 				), end='  ')
 				nucleotide(d[a]['seq'], bases)
@@ -153,7 +152,7 @@ def main(args):
 					content(d[a]['seq'], 'A'),
 					content(d[a]['seq'], 'C'), 
 					content(d[a]['seq'], 'G'),
-					content(d[a]['seq'], 'T'),  
+					content(d[a]['seq'], 'T'),
 			), end='  ')
 			nucleotide(d[a]['seq'], bases)
 			dinucleotide(d[a]['seq'], di)
@@ -162,5 +161,5 @@ def main(args):
 			print()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	main(sys.argv)

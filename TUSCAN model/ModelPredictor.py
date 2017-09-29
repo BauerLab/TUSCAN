@@ -31,14 +31,14 @@ has_name = True
 # If a bed file is given
 if (args.t == 'bed'):
 	if not args.g:
-		print("Genome required with bed file")
+		print('Genome required with bed file')
 		sys.exit()
 	b = open(args.i, 'r')
 	bed_type = b.readline()
 	bed_type = bed_type.split()
 	bed_columns = len(bed_type)
 	if bed_columns < 3:
-		sys.stderr.write("Invalid bed file, must have at least 3 columns\n")
+		sys.stderr.write('Invalid bed file, must have at least 3 columns\n')
 		sys.exit()
 	c = pybedtools.BedTool(args.i)
 	genome = args.g
@@ -52,7 +52,7 @@ if (args.t == 'bed'):
 		d = c.sequence(fi=genome)
 
 #arguments to pass to matrix builder
-name = str(args.i[:-len(str(args.t))-1])+"_matrix.txt"
+name = str(args.i[:-len(str(args.t))-1]) + '_matrix.txt'
 
 #get important features
 l = {}
@@ -62,7 +62,7 @@ if args.m == 'Regression':
 elif args.m == 'Classification':
 	f = open('rf_features_classification.txt')
 else:
-	sys.stderr.write("Invalid model type, must be Classification or Regression\n")
+	sys.stderr.write('Invalid model type, must be Classification or Regression\n')
 	sys.exit()	
 for line in f:
 	feat = line.split()
@@ -94,12 +94,12 @@ if (args.t == 'bed' or args.t == 'fa'):
 				count = z
 				if (args.t == 'bed'):
 					count = z/2
-				sys.stderr.write("The sequence at line " + str(count) + " contains an invalid nucleotide\n")
+				sys.stderr.write('The sequence at line ' + str(count) + ' contains an invalid nucleotide\n')
 			elif len(line) != 30:
 				count = z
 				if (args.t == 'bed'):
 					count = z/2
-				sys.stderr.write("The sequence at line " + str(count) + " is not 30 base pairs, it is " + str(len(line)) + '\n')
+				sys.stderr.write('The sequence at line ' + str(count) + ' is not 30 base pairs, it is ' + str(len(line)) + '\n')
 			elif line[25:27] != 'GG':
 				revcompl = lambda x: ''.join([{'A':'T','C':'G','G':'C','T':'A'}[B] for B in x][::-1])
 				reverseLine = revcompl(line)
@@ -107,7 +107,7 @@ if (args.t == 'bed' or args.t == 'fa'):
 					count = z
 					if (args.t == 'bed'):
 						count = z/2
-					sys.stderr.write("The sequence at line " + str(count) + " does not have a PAM motif\n")
+					sys.stderr.write('The sequence at line ' + str(count) + ' does not have a PAM motif\n')
 				else:
 					s[k] = {}
 					s[k]['seq'] = reverseLine
@@ -115,7 +115,7 @@ if (args.t == 'bed' or args.t == 'fa'):
 					count = z
 					if (args.t == 'bed'):
 						count = z/2
-					sys.stderr.write("The sequence at line " + str(count) + " was in the negative orientation\n")
+					sys.stderr.write('The sequence at line ' + str(count) + ' was in the negative orientation\n')
 			else:
 				s[k] = {}
 				s[k]['seq'] = line
@@ -132,19 +132,19 @@ elif (args.t == 'txt'):
 			count = z
 			if (args.t == 'bed'):
 				count = z/2
-			sys.stderr.write("The sequence at line " + str(count) + " contains an invalid nucleotide\n")
+			sys.stderr.write('The sequence at line ' + str(count) + ' contains an invalid nucleotide\n')
 		elif len(line) != 30:
-			sys.stderr.write("The sequence at line " + str(z) + " is not 30 base pairs, it is " + str(len(line)) + '\n')
+			sys.stderr.write('The sequence at line ' + str(z) + ' is not 30 base pairs, it is ' + str(len(line)) + '\n')
 		elif line[25:27] != 'GG':
 			revcompl = lambda x: ''.join([{'A':'T','C':'G','G':'C','T':'A'}[B] for B in x][::-1])
 			reverseLine = revcompl(line)
 			if reverseLine[25:27] != 'GG':
-				sys.stderr.write("The sequence at line " + str(z) + " does not have a PAM motif\n")
+				sys.stderr.write('The sequence at line ' + str(z) + ' does not have a PAM motif\n')
 			else:
 				s[z] = {}
 				s[z]['seq'] = reverseLine
 				s[z]['dir'] = '-'
-				sys.stderr.write("The sequence at line " + str(z) + " was in the negative orientation\n")
+				sys.stderr.write('The sequence at line ' + str(z) + ' was in the negative orientation\n')
 		else:		
 			s[z] = {}	
 			s[z]['seq'] = line
@@ -152,7 +152,7 @@ elif (args.t == 'txt'):
 			z += 1
 	f.close
 else:
-	print("Usage [-t bed/fa/txt]")
+	print('Usage [-t bed/fa/txt]')
 	sys.exit()
 
 #Read in sequence data to create feature matrix
@@ -176,13 +176,13 @@ a = []
 for i in l:
 	a.append(features.index(i))
 
-data = numpy.genfromtxt(name, dtype = 'f8', usecols = range(1,num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', usecols = range(1, num_features))
 train = data[:, a]
 # Remove header row
 train = numpy.delete(train, 0, 0)
 
-LAYOUT = "{!s:50} {!s:31} {!s:15} {!s:3}"
-toPrint = str(LAYOUT.format("ID", "Sequence", "Score", "Dir"))+str('\n')
+LAYOUT = '{!s:50} {!s:31} {!s:15} {!s:3}'
+toPrint = str(LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')) + str('\n')
 #Open and predict on the randomForest
 if args.m == 'Regression':
 	with open('rfModelregressor.joblib', 'rb') as f:
@@ -190,13 +190,12 @@ if args.m == 'Regression':
 	scores = rf.predict(train)
 	z = 0
 	for a in s:
-		toPrint = str(toPrint)+str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir']))+str('\n')
+		toPrint = str(toPrint) + str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir'])) + str('\n')
 		z += 1
 	if args.o:
 		output_file = str(args.o)
 		with open(output_file, 'w') as f:
 			f.write(toPrint)
-		f.close()		
 	#Print to standard output
 	else:
 		print(toPrint)
@@ -206,15 +205,14 @@ elif args.m == 'Classification':
 	scores = rf.predict(train)
 	z = 0
 	for a in s:
-		toPrint = str(toPrint)+str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir']))+str('\n')
+		toPrint = str(toPrint) + str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir'])) + str('\n')
 		z += 1
 	if args.o:
 		output_file = str(args.o)
 		with open(output_file, 'w') as f:
 			f.write(toPrint)
-		f.close()		
 	#Print to standard output
 	else:
 		print(toPrint)
 else:
-	print("Usage: [-m Regression] or [-m Classification]")
+	print('Usage: [-m Regression] or [-m Classification]')

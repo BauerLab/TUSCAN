@@ -175,43 +175,41 @@ features = features[1:]
 #gets index of important features
 a = [features.index(i) for i in l]
 
-data = numpy.genfromtxt(name, dtype = 'f8', usecols = range(1, num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', skip_header = 1, usecols = range(1, num_features))
 train = data[:, a]
 
-# Remove header row
-train = numpy.delete(train, 0, 0)
 LAYOUT = '{!s:50} {!s:31} {!s:15} {!s:3}'
-toPrint = str(LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')) + str('\n')
+header = LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')
 #Open and predict on the randomForest
 if args.m == 'Regression':
 	with open('rfModelregressor.joblib', 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
-	z = 0
-	for a in s:
-		toPrint = str(toPrint) + str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir'])) + str('\n')
-		z += 1
 	if args.o:
-		output_file = str(args.o)
-		with open(output_file, 'w') as f:
-			f.write(toPrint)
-	#Print to standard output
+		with open(str(args.o), 'w') as f:
+			f.write(header)
+			for idx, a in enumerate(s):
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
 	else:
-		print(toPrint)
+		print(header)
+		for idx, a in enumerate(s):
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+
+
 elif args.m == 'Classification':
 	with open('rfModelclassifier.joblib', 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
-	z = 0
-	for a in s:
-		toPrint = str(toPrint) + str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir'])) + str('\n')
-		z += 1
 	if args.o:
-		output_file = str(args.o)
-		with open(output_file, 'w') as f:
-			f.write(toPrint)
-	#Print to standard output
+		with open(str(args.o), 'w') as f:
+			f.write(header)
+			for idx, a in enumerate(s):
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
 	else:
-		print(toPrint)
+		print(header)
+		for idx, a in enumerate(s):
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+
+
 else:
 	print('Usage: [-m Regression] or [-m Classification]')

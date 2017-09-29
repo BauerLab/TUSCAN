@@ -55,7 +55,7 @@ if (args.t == 'bed'):
 name = str(args.i[:-len(str(args.t))-1]) + '_matrix.txt'
 
 #get important features
-l = {}
+l = []
 if args.m == 'Regression':
 	#f = open(args.f)
 	f = open('rf_features_regression.txt')
@@ -67,8 +67,9 @@ else:
 for line in f:
 	feat = line.split()
 	for b in feat:
-		l[b.strip('"')] = 0
+		l.append(b.strip('"'))
 f.close()
+
 
 #Valid DNA letters
 valid = 'ACTG'
@@ -162,25 +163,23 @@ sys.stdout = open(name, 'w')
 FeatureMatrix.main([s])
 sys.stdout.close()
 sys.stdout = stdout_
-	
+
 #grabs list of features
 lines = []
-f = open(name, 'r')
-features = f.readline()
+with open(name, 'r') as f:
+	features = f.readline()
 features = features.split()
 num_features = len(features)
 features = features[1:]
 
 #gets index of important features
-a = []
-for i in l:
-	a.append(features.index(i))
+a = [features.index(i) for i in l]
 
 data = numpy.genfromtxt(name, dtype = 'f8', usecols = range(1, num_features))
 train = data[:, a]
+
 # Remove header row
 train = numpy.delete(train, 0, 0)
-
 LAYOUT = '{!s:50} {!s:31} {!s:15} {!s:3}'
 toPrint = str(LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')) + str('\n')
 #Open and predict on the randomForest

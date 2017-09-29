@@ -11,19 +11,18 @@ from sklearn.externals import joblib
 from numpy import genfromtxt, savetxt
 
 #get important features for feature selection
-l = {}
+l = []
 f = open(sys.argv[3])
 for line in f:
 	feat = line.split()
 	for b in feat:
-		l[b.strip('"')]	= 0
+		l.append(b.strip('"'))
 f.close()
 
 #grabs full list of features from matrix
 lines = []
-f = open(sys.argv[2], 'r')
-features = f.readline()
-f.close()
+with open(sys.argv[2], 'r') as f:
+	features = f.readline()
 features = features.split()
 num_features = len(features)
 features = features[1:]

@@ -7,7 +7,7 @@
 
 import sys
 import FeatureMatrix
-import cPickle
+import pickle
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.externals import joblib
 import numpy
@@ -31,14 +31,14 @@ has_name = True
 # If a bed file is given
 if (args.t == 'bed'):
 	if not args.g:
-		print "Genome required with bed file"
+		print('Genome required with bed file')
 		sys.exit()
 	b = open(args.i, 'r')
 	bed_type = b.readline()
 	bed_type = bed_type.split()
 	bed_columns = len(bed_type)
 	if bed_columns < 3:
-		sys.stderr.write("Invalid bed file, must have at least 3 columns\n")
+		sys.stderr.write('Invalid bed file, must have at least 3 columns\n')
 		sys.exit()
 	c = pybedtools.BedTool(args.i)
 	genome = args.g
@@ -52,23 +52,24 @@ if (args.t == 'bed'):
 		d = c.sequence(fi=genome)
 
 #arguments to pass to matrix builder
-name = str(args.i[:-len(str(args.t))-1])+"_matrix.txt"
+name = str(args.i[:-len(str(args.t))-1]) + '_matrix.txt'
 
 #get important features
-l = {}
+l = []
 if args.m == 'Regression':
 	#f = open(args.f)
 	f = open('rf_features_regression.txt')
 elif args.m == 'Classification':
 	f = open('rf_features_classification.txt')
 else:
-	sys.stderr.write("Invalid model type, must be Classification or Regression\n")
+	sys.stderr.write('Invalid model type, must be Classification or Regression\n')
 	sys.exit()	
 for line in f:
 	feat = line.split()
 	for b in feat:
-		l[b.strip('"')] = 0
+		l.append(b.strip('"'))
 f.close()
+
 
 #Valid DNA letters
 valid = 'ACTG'
@@ -94,12 +95,12 @@ if (args.t == 'bed' or args.t == 'fa'):
 				count = z
 				if (args.t == 'bed'):
 					count = z/2
-				sys.stderr.write("The sequence at line " + str(count) + " contains an invalid nucleotide\n")
+				sys.stderr.write('The sequence at line ' + str(count) + ' contains an invalid nucleotide\n')
 			elif len(line) != 30:
 				count = z
 				if (args.t == 'bed'):
 					count = z/2
-				sys.stderr.write("The sequence at line " + str(count) + " is not 30 base pairs, it is " + str(len(line)) + '\n')
+				sys.stderr.write('The sequence at line ' + str(count) + ' is not 30 base pairs, it is ' + str(len(line)) + '\n')
 			elif line[25:27] != 'GG':
 				revcompl = lambda x: ''.join([{'A':'T','C':'G','G':'C','T':'A'}[B] for B in x][::-1])
 				reverseLine = revcompl(line)
@@ -107,7 +108,7 @@ if (args.t == 'bed' or args.t == 'fa'):
 					count = z
 					if (args.t == 'bed'):
 						count = z/2
-					sys.stderr.write("The sequence at line " + str(count) + " does not have a PAM motif\n")
+					sys.stderr.write('The sequence at line ' + str(count) + ' does not have a PAM motif\n')
 				else:
 					s[k] = {}
 					s[k]['seq'] = reverseLine
@@ -115,7 +116,7 @@ if (args.t == 'bed' or args.t == 'fa'):
 					count = z
 					if (args.t == 'bed'):
 						count = z/2
-					sys.stderr.write("The sequence at line " + str(count) + " was in the negative orientation\n")
+					sys.stderr.write('The sequence at line ' + str(count) + ' was in the negative orientation\n')
 			else:
 				s[k] = {}
 				s[k]['seq'] = line
@@ -132,19 +133,19 @@ elif (args.t == 'txt'):
 			count = z
 			if (args.t == 'bed'):
 				count = z/2
-			sys.stderr.write("The sequence at line " + str(count) + " contains an invalid nucleotide\n")
+			sys.stderr.write('The sequence at line ' + str(count) + ' contains an invalid nucleotide\n')
 		elif len(line) != 30:
-			sys.stderr.write("The sequence at line " + str(z) + " is not 30 base pairs, it is " + str(len(line)) + '\n')
+			sys.stderr.write('The sequence at line ' + str(z) + ' is not 30 base pairs, it is ' + str(len(line)) + '\n')
 		elif line[25:27] != 'GG':
 			revcompl = lambda x: ''.join([{'A':'T','C':'G','G':'C','T':'A'}[B] for B in x][::-1])
 			reverseLine = revcompl(line)
 			if reverseLine[25:27] != 'GG':
-				sys.stderr.write("The sequence at line " + str(z) + " does not have a PAM motif\n")
+				sys.stderr.write('The sequence at line ' + str(z) + ' does not have a PAM motif\n')
 			else:
 				s[z] = {}
 				s[z]['seq'] = reverseLine
 				s[z]['dir'] = '-'
-				sys.stderr.write("The sequence at line " + str(z) + " was in the negative orientation\n")
+				sys.stderr.write('The sequence at line ' + str(z) + ' was in the negative orientation\n')
 		else:		
 			s[z] = {}	
 			s[z]['seq'] = line
@@ -152,70 +153,63 @@ elif (args.t == 'txt'):
 			z += 1
 	f.close
 else:
-	print "Usage [-t bed/fa/txt]"
+	print('Usage [-t bed/fa/txt]')
 	sys.exit()
 
 #Read in sequence data to create feature matrix
 #generate feature matrix
 stdout_ = sys.stdout
 sys.stdout = open(name, 'w')
-
 FeatureMatrix.main([s])
 sys.stdout.close()
 sys.stdout = stdout_
-	
+
 #grabs list of features
 lines = []
-f = open(name, 'r')
-features = f.readline()
+with open(name, 'r') as f:
+	features = f.readline()
 features = features.split()
 num_features = len(features)
 features = features[1:]
 
 #gets index of important features
-a = []
-for i in l:
-	a.append(features.index(i))
+a = [features.index(i) for i in l]
 
-data = numpy.genfromtxt(open(name, 'r'), dtype = 'f8', usecols = range(1,num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', skip_header = 1, usecols = range(1, num_features))
 train = data[:, a]
-# Remove header row
-train = numpy.delete(train, 0, 0)
 
-LAYOUT = "{!s:50} {!s:31} {!s:15} {!s:3}"
-toPrint = str(LAYOUT.format("ID", "Sequence", "Score", "Dir"))+str('\n')
+LAYOUT = '{!s:50} {!s:31} {!s:15} {!s:3}'
+header = LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')
 #Open and predict on the randomForest
 if args.m == 'Regression':
 	with open('rfModelregressor.joblib', 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
-	z = 0
-	for a in s:
-		toPrint = str(toPrint)+str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir']))+str('\n')
-		z += 1
 	if args.o:
-		output_file = str(args.o)
-		with open(output_file, 'w') as f:
-			f.write(toPrint)
-		f.close()		
-	#Print to standard output
+		with open(str(args.o), 'w') as f:
+			f.write(header)
+			for idx, a in enumerate(s):
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
 	else:
-		print toPrint
+		print(header)
+		for idx, a in enumerate(s):
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+
+
 elif args.m == 'Classification':
 	with open('rfModelclassifier.joblib', 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
-	z = 0
-	for a in s:
-		toPrint = str(toPrint)+str(LAYOUT.format(a, s[a]['seq'], scores[z], s[a]['dir']))+str('\n')
-		z += 1
 	if args.o:
-		output_file = str(args.o)
-		with open(output_file, 'w') as f:
-			f.write(toPrint)
-		f.close()		
-	#Print to standard output
+		with open(str(args.o), 'w') as f:
+			f.write(header)
+			for idx, a in enumerate(s):
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
 	else:
-		print toPrint
+		print(header)
+		for idx, a in enumerate(s):
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+
+
 else:
-	print "Usage: [-m Regression] or [-m Classification]"
+	print('Usage: [-m Regression] or [-m Classification]')

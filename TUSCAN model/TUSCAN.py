@@ -14,6 +14,10 @@ import numpy
 import pybedtools
 import argparse
 from collections import OrderedDict
+import os
+
+#collect directory
+dir = os.path.dirname(os.path.realpath(__file__))
 
 #Parse Arguments
 parser = argparse.ArgumentParser()
@@ -58,9 +62,11 @@ name = str(args.i[:-len(str(args.t))-1]) + '_matrix.txt'
 l = []
 if args.m == 'Regression':
 	#f = open(args.f)
-	f = open('rf_features_regression.txt')
+	rft = dir + '/rf_features_regression.txt'
+	f = open(rft)
 elif args.m == 'Classification':
-	f = open('rf_features_classification.txt')
+	cft = dir + '/rf_features_classification.txt'
+	f = open(cft)
 else:
 	sys.stderr.write('Invalid model type, must be Classification or Regression\n')
 	sys.exit()	
@@ -182,7 +188,8 @@ LAYOUT = '{!s:50} {!s:31} {!s:15} {!s:3}'
 header = LAYOUT.format('ID', 'Sequence', 'Score', 'Dir')
 #Open and predict on the randomForest
 if args.m == 'Regression':
-	with open('rfModelregressor.joblib', 'rb') as f:
+	rfm = dir + '/rfModelregressor.joblib'
+	with open(rfm, 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
 	if args.o:
@@ -197,7 +204,8 @@ if args.m == 'Regression':
 
 
 elif args.m == 'Classification':
-	with open('rfModelclassifier.joblib', 'rb') as f:
+	cfm = dir + '/rfModelclassifier.joblib'
+	with open(cfm, 'rb') as f:
 		rf = joblib.load(f)
 	scores = rf.predict(train)
 	if args.o:

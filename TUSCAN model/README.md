@@ -1,5 +1,6 @@
 # Using the TUSCAN predictor
 
+
 **Building a model**  
 To build classifier, run
 ```
@@ -20,7 +21,7 @@ TUSCAN requires the following Python packages to work:
 
 - sys
 - cPickle
-- sklearn (v0.18)
+- sklearn
 - numpy
 - pybedtools
 - argparse
@@ -29,7 +30,7 @@ TUSCAN requires the following Python packages to work:
 
 Usage:
 ```
-python ModelPredictor.py -i Infile (.fa/.bed/.txt) -o Outfile.txt -m Regression/Classification -t InfileType (fa/bed/txt) -g genome (if supplying bed file)
+python TUSCAN.py -i Infile (.fa/.bed/.txt) -o Outfile.txt -m Regression/Classification -t InfileType (fa/bed/txt) -g genome (if supplying bed file)
 ```
 
 Use -h for Help

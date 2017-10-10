@@ -40,13 +40,13 @@ train = data[:, a]
 #Create and train the randomForest
 print('Building Random Forest')
 if sys.argv[1] == '-r':
-	rf = RandomForestRegressor(n_estimators=1001, max_features=2)
+	rf = RandomForestRegressor(n_estimators=1001)
 	print('Fitting Random Forest Regressor')
 	rf.fit(train, target)
 	with open('rfModelregressor.joblib', 'wb') as f:
 		joblib.dump(rf, f)
 elif sys.argv[1] == '-c':
-	rf = RandomForestClassifier(n_estimators=1001, max_features=2)
+	rf = RandomForestClassifier(n_estimators=1001)
 	print('Fitting Random Forest Classifier')
 	rf.fit(train, target)
 	with open('rfModelclassifier.joblib', 'wb') as f:

@@ -187,13 +187,13 @@ if args.m == 'Regression':
 	scores = rf.predict(train)
 	if args.o:
 		with open(str(args.o), 'w') as f:
-			f.write(header)
+			f.write(header+str('\n'))
 			for idx, a in enumerate(s):
-				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir'])+str('\n'))
 	else:
-		print(header)
+		print(header+str('\n'))
 		for idx, a in enumerate(s):
-			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir'])+str('\n'))
 
 
 elif args.m == 'Classification':
@@ -202,13 +202,13 @@ elif args.m == 'Classification':
 	scores = rf.predict(train)
 	if args.o:
 		with open(str(args.o), 'w') as f:
-			f.write(header)
+			f.write(header+str('\n'))
 			for idx, a in enumerate(s):
-				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+				f.write(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir'])+str('\n'))
 	else:
-		print(header)
+		print(header+str('\n'))
 		for idx, a in enumerate(s):
-			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir']))
+			print(LAYOUT.format(a, s[a]['seq'], scores[idx], s[a]['dir'])+str('\n'))
 
 
 else:

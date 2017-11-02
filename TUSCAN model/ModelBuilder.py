@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #USAGE: ./this.program.py -c/r matrix.txt features.txt
 #choose if doing classification or regression

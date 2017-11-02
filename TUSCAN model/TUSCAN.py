@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #Given a sequence, this program uses a Random Forest to predict the activity 
 #via a feature matrix, using a predefined master model created using a training set

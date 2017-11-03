@@ -181,7 +181,7 @@ features = features[1:]
 #gets index of important features
 a = [features.index(i) for i in l]
 
-data = numpy.genfromtxt(name, dtype = 'f9', skip_header = 1, usecols = range(1, num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', skip_header = 1, usecols = range(1, num_features))
 
 if len(data.shape) == 1:
 	data = numpy.array([data])

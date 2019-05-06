@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #Given a sequence, this program uses a Random Forest to predict the activity 
 #via a feature matrix, using a predefined master model created using a training set
@@ -181,7 +181,7 @@ features = features[1:]
 #gets index of important features
 a = [features.index(i) for i in l]
 
-data = numpy.genfromtxt(name, dtype = 'f9', skip_header = 1, usecols = range(1, num_features))
+data = numpy.genfromtxt(name, dtype = 'f8', skip_header = 1, usecols = range(1, num_features))
 
 if len(data.shape) == 1:
 	data = numpy.array([data])

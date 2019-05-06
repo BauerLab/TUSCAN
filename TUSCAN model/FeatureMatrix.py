@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #This program creates a feature matrix given a fasta (.fa) and corresponding bed (.bed) file
 #Written by Daniel Reti, November 2016

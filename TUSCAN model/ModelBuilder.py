@@ -5,7 +5,6 @@
 #Given a feature table, this program will build a model and store it in a joblib file
 
 import sys
-import FeatureMatrix
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.externals import joblib
 from numpy import genfromtxt, savetxt

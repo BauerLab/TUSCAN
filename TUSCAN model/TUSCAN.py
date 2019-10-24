@@ -15,6 +15,7 @@
 
 # NOTE: Final output will be in arbitrary order due to multithreading. 
 # Output is tab-separated and easy for users to manipulate using UNIX sort or other flavours. 
+# Ouput is in bed6 format, with the unique ID being chrom_start_stop_targetSequence
 
 import sys
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
@@ -25,7 +26,7 @@ import argparse
 from collections import OrderedDict, namedtuple
 import os
 import re
-from string import maketrans
+# from string import maketrans
 from multiprocessing import Process, Queue, cpu_count
 
 NucleotideLocation = namedtuple('NucleotideLocation', ['nucleotide', 'location'])
@@ -211,7 +212,8 @@ def get_features(seq, is_regression):
 def output_sequences(sequences, feature_lists, output_queue):
     feature_array = numpy.array(feature_lists)
     scores = rf.predict(feature_array)
-    output_queue.put('\n'.join(seq + '\t' + str(scores[i]) for i, seq in enumerate(sequences)))
+    # output_queue.put('\n'.join(seq + '\t' + str(scores[i]) for i, seq in enumerate(sequences)))
+    output_queue.put('\n'.join(seq[0] + '\t' + seq[1] + '\t' + seq[2] + '\t' + seq[3] + '\t' + str(scores[i]) + '\t' + seq[4] for i, seq in enumerate(sequences)))
 
 def score_sequences(matches_queue, output_queue, is_reverse):
     strand = "-" if is_reverse else "+"
@@ -231,7 +233,9 @@ def score_sequences(matches_queue, output_queue, is_reverse):
             sequence_start_pos = start + match_start + 3 + 2
             sequence_end_pos = sequence_start_pos + 23 - 1
         feature_list = get_features(sequence, is_regression)
-        sequences.append('{!s:5} {!s:10} {!s:10} {!s:8} {!s:31}'.format(chrom, str(sequence_start_pos), str(sequence_end_pos), strand, sequence[4:-3]))
+        # sequences.append('{!s:5} {!s:10} {!s:10} {!s:8} {!s:31}'.format(chrom, str(sequence_start_pos), str(sequence_end_pos), strand, sequence[4:-3]))
+        uniq_id = str(str(chrom)+"_"+str(sequence_start_pos)+"_"+str(sequence_end_pos)+"_"+str(sequence[4:-3]))
+        sequences.append([chrom, str(sequence_start_pos), str(sequence_end_pos), uniq_id, strand])
         feature_lists.append(feature_list)
         if len(sequences) >= 10000:
             output_sequences(sequences, feature_lists, output_queue)
@@ -325,12 +329,12 @@ if not sequence:
     sys.exit()
 
 LAYOUT = '{!s:5} {!s:10} {!s:10} {!s:8} {!s:34} {!s:15}'
-header = LAYOUT.format('Chrom', 'Start', 'End', 'Strand', 'Candidate_sgRNA', 'TUSCAN_Score')
+header = LAYOUT.format('Chrom', 'Start', 'End', 'ID', 'TUSCANScore', 'Strand')
 
 #Find and store all sequences + location information
 input_base = "ATCG"
 output_base = "TAGC"
-complement = maketrans(input_base, output_base)
+complement = str.maketrans(input_base, output_base)
 reverse_sequence = sequence.translate(complement)[::-1]
 
 matches = re.finditer(r'(?=([ACTG]{25}GG[ACTG]{3}))', sequence)
